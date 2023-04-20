@@ -36,8 +36,10 @@
 #import "mediapipe/objc/MPPGraphTestBase.h"
 #import "mediapipe/objc/util.h"
 #import "mediapipe/framework/calculator_framework.h"
+#import "mediapipe/framework/calculator_base.h"
+#import "mediapipe/framework/calculator_graph.h"
+#import "mediapipe/framework/validated_graph_config.h"
 #import "mediapipe/gpu/gl_calculator_helper.h"
-
 
 // Forward declarations for the Swift classes
 __attribute__((objc_runtime_name("_TtC12VisionCamera12CameraQueues")))
@@ -74,6 +76,7 @@ __attribute__((objc_runtime_name("_TtC12VisionCamera10CameraView")))
     NSLog(@"Failed to load MediaPipe graph config: %@", configLoadError);
     return nil;
   }
+
 
   // Parse the graph config resource into mediapipe::CalculatorGraphConfig proto object.
   mediapipe::CalculatorGraphConfig config;
