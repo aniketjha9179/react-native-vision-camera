@@ -30,6 +30,15 @@
 #import "../React Utils/JSIUtils.h"
 #import "../../cpp/JSITypedArray.h"
 
+#import "mediapipe/framework/tool/source.pb.h"
+#import "mediapipe/gpu/gpu_shared_data_internal.h"
+#import "mediapipe/objc/MPPGraph.h"
+#import "mediapipe/objc/MPPGraphTestBase.h"
+#import "mediapipe/objc/util.h"
+#import "mediapipe/framework/calculator_framework.h"
+#import "mediapipe/gpu/gl_calculator_helper.h"
+
+
 // Forward declarations for the Swift classes
 __attribute__((objc_runtime_name("_TtC12VisionCamera12CameraQueues")))
 @interface CameraQueues : NSObject
@@ -50,6 +59,30 @@ __attribute__((objc_runtime_name("_TtC12VisionCamera10CameraView")))
         // Initialize self
     }
     return self;
+}
+
++ (MPPGraph*)loadGraphFromResource:(NSString*)resource {
+  // Load the graph config resource.
+  NSError* configLoadError = nil;
+  NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+  if (!resource || resource.length == 0) {
+    return nil;
+  }
+  NSURL* graphURL = [bundle URLForResource:resource withExtension:@"binarypb"];
+  NSData* data = [NSData dataWithContentsOfURL:graphURL options:0 error:&configLoadError];
+  if (!data) {
+    NSLog(@"Failed to load MediaPipe graph config: %@", configLoadError);
+    return nil;
+  }
+
+  // Parse the graph config resource into mediapipe::CalculatorGraphConfig proto object.
+  mediapipe::CalculatorGraphConfig config;
+  config.ParseFromArray(data.bytes, data.length);
+
+  // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
+  MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
+  [newGraph addFrameOutputStream:kOutputStream outputPacketType:MPPPacketTypePixelBuffer];
+  return newGraph;
 }
 
 - (void) setupWorkletContext:(jsi::Runtime&)runtime {
@@ -164,7 +197,7 @@ __attribute__((objc_runtime_name("_TtC12VisionCamera10CameraView")))
                                                                                                          jsi::PropNameID::forAscii(jsiRuntime, "setFrameProcessor"),
                                                                                                          2,  // viewTag, frameProcessor
                                                                                                          setFrameProcessor));
-
+  
   // unsetFrameProcessor(viewTag: number)
   auto unsetFrameProcessor = JSI_HOST_FUNCTION_LAMBDA {
     NSLog(@"FrameProcessorBindings: Removing frame processor...");
@@ -187,6 +220,18 @@ __attribute__((objc_runtime_name("_TtC12VisionCamera10CameraView")))
                                                                                                            jsi::PropNameID::forAscii(jsiRuntime, "unsetFrameProcessor"),
                                                                                                            1,  // viewTag
                                                                                                            unsetFrameProcessor));
+  
+  // loadModel(model: string)
+  auto loadModel = JSI_HOST_FUNCTION_LAMBDA {
+    NSLog(@"Loading MediaPipe Model...");
+    
+
+    return jsi::Value::undefined();
+  };
+  jsiRuntime.global().setProperty(jsiRuntime, "__visionCameraLoadModel", jsi::Function::createFromHostFunction(jsiRuntime,
+                                                                                                               jsi::PropNameID::forAscii(jsiRuntime, "__visionCameraLoadModel"),
+                                                                                                               1,  // viewTag
+                                                                                                               loadModel));
 
   NSLog(@"FrameProcessorBindings: Finished installing bindings.");
 }
