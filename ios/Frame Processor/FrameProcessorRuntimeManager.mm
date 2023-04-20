@@ -228,12 +228,23 @@ __attribute__((objc_runtime_name("_TtC12VisionCamera10CameraView")))
   auto loadModel = JSI_HOST_FUNCTION_LAMBDA {
     NSLog(@"Loading MediaPipe Model...");
     
-
-    return jsi::Value::undefined();
+    auto mediaGraph = [self loadGraphFromResource:@"resource.mpb"];
+    
+    auto runModel = [](jsi::Runtime& r,
+                       const jsi::Value &t,
+                       const jsi::Value *a, size_t c) -> jsi::Value {
+      NSLog(@"TODO: Run Model");
+      
+      return jsi::Value::undefined();
+    };
+    return jsi::Function::createFromHostFunction(jsiRuntime,
+                                                 jsi::PropNameID::forAscii(jsiRuntime, "runModel"),
+                                                 1,  // frame
+                                                 runModel);
   };
   jsiRuntime.global().setProperty(jsiRuntime, "__visionCameraLoadModel", jsi::Function::createFromHostFunction(jsiRuntime,
                                                                                                                jsi::PropNameID::forAscii(jsiRuntime, "__visionCameraLoadModel"),
-                                                                                                               1,  // viewTag
+                                                                                                               1,  // modelName
                                                                                                                loadModel));
 
   NSLog(@"FrameProcessorBindings: Finished installing bindings.");

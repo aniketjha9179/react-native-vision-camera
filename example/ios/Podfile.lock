@@ -13,7 +13,6 @@ PODS:
   - glog (0.3.5)
   - hermes-engine (0.71.3):
     - hermes-engine/Pre-built (= 0.71.3)
-  - hermes-engine/Pre-built (0.71.3)
   - libevent (2.1.12)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -644,9 +643,9 @@ SPEC CHECKSUMS:
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  VisionCamera: ff7ef090fa5ab0504fedef4cc05f140755a59edb
+  VisionCamera: 04c14385574f7b0617485f25946f1952e1fe1e2f
   Yoga: 5ed1699acbba8863755998a4245daa200ff3817b
 
-PODFILE CHECKSUM: d53724fe402c2547f1dd1cc571bbe77d9820e636
+PODFILE CHECKSUM: ce3fce828129399effc23656cfb35c600a80b239
 
 COCOAPODS: 1.12.1
